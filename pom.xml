@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.0</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.github.luuispnp.obradoberco</groupId>
+	<artifactId>obra-do-berco</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>obra-do-berco</name>
+	<description>Projeto Raiz - Obra do Berco</description>
+
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>obra-do-berco-gestante</module>
+		<module>obra-do-berco-solicitacoes</module>
+		<module>obra-do-berco-document</module>
+		<module>obra-do-berco-api-gateway</module>
+		<module>obra-do-berco-eureka-server</module>
+		<module>obra-do-berco-voluntarios</module>
+	</modules>
+
+</project>
