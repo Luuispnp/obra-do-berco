@@ -4,6 +4,7 @@ import com.github.luuispnp.obra_do_berco_voluntarios.dto.request.VoluntarioReque
 import com.github.luuispnp.obra_do_berco_voluntarios.dto.response.VoluntarioResponse;
 import com.github.luuispnp.obra_do_berco_voluntarios.service.VoluntarioService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,30 @@ public class VoluntarioController {
         VoluntarioResponse response = voluntarioService.findById(voluntarioId);
         return ResponseEntity
                 .ok(response);
+    }
+
+    @PutMapping("/{voluntarioId}")
+    public ResponseEntity<VoluntarioResponse> updateById(@PathVariable UUID voluntarioId, @RequestBody @Valid VoluntarioRequest voluntarioRequest) {
+        VoluntarioResponse response = voluntarioService.updateById(voluntarioId, voluntarioRequest);
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @DeleteMapping("/{voluntarioId}")
+    public ResponseEntity<VoluntarioResponse> deleteFromId(@PathVariable UUID voluntarioId) {
+        VoluntarioResponse response = voluntarioService.deleteById(voluntarioId);
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<VoluntarioResponse>> search(
+            @RequestParam
+            @NotBlank(message = "O nome é obrigatório.")
+            String name) {
+        List<VoluntarioResponse> responses = voluntarioService.searchByName(name);
+        return ResponseEntity
+                .ok(responses);
     }
 
 }
