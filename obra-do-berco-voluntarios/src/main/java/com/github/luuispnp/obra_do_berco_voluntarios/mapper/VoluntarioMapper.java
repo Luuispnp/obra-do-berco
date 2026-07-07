@@ -5,10 +5,14 @@ import com.github.luuispnp.obra_do_berco_voluntarios.dto.response.VoluntarioResp
 import com.github.luuispnp.obra_do_berco_voluntarios.entity.Voluntario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
 public interface VoluntarioMapper {
 
     @Mapping(target = "dataCadastro", ignore = true)
@@ -19,4 +23,6 @@ public interface VoluntarioMapper {
    VoluntarioResponse toResponse(Voluntario voluntario);
 
    List<VoluntarioResponse> toResponseList(List<Voluntario> voluntarios);
+
+   void updateVoluntario(VoluntarioRequest voluntarioRequest, @MappingTarget Voluntario voluntario);
 }

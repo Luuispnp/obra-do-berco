@@ -2,7 +2,6 @@ package com.github.luuispnp.obra_do_berco_voluntarios.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,17 +48,17 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException exception) {
-        ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
-                exception.getMessage(),
-                HttpStatus.UNAUTHORIZED.value()
-        );
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(error);
-    }
+//    @ExceptionHandler(BadCredentialsException.class)
+//    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException exception) {
+//        ErrorResponse error = new ErrorResponse(
+//                LocalDateTime.now(),
+//                exception.getMessage(),
+//                HttpStatus.UNAUTHORIZED.value()
+//        );
+//        return ResponseEntity
+//                .status(HttpStatus.UNAUTHORIZED)
+//                .body(error);
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(MethodArgumentNotValidException exception) {
