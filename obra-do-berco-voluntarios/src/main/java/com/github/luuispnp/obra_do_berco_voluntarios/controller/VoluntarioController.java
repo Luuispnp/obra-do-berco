@@ -4,7 +4,6 @@ import com.github.luuispnp.obra_do_berco_voluntarios.dto.request.VoluntarioReque
 import com.github.luuispnp.obra_do_berco_voluntarios.dto.response.VoluntarioResponse;
 import com.github.luuispnp.obra_do_berco_voluntarios.service.VoluntarioService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,41 +30,42 @@ public class VoluntarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VoluntarioResponse>> findAll() {
-        List<VoluntarioResponse> responses = voluntarioService.findAll();
-        return ResponseEntity
-                .ok(responses);
-    }
-
-    @GetMapping("/{voluntarioId}")
-    public ResponseEntity<VoluntarioResponse> findById(@PathVariable UUID voluntarioId) {
-        VoluntarioResponse response = voluntarioService.findById(voluntarioId);
+    public ResponseEntity<List<VoluntarioResponse>> findVoluntarios(
+            @RequestParam(required = false) String nomeCompleto,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean ativo
+    ) {
+        List<VoluntarioResponse> response = voluntarioService.findWithFilter(nomeCompleto, email, ativo);
         return ResponseEntity
                 .ok(response);
     }
 
-    @PutMapping("/{voluntarioId}")
-    public ResponseEntity<VoluntarioResponse> updateById(@PathVariable UUID voluntarioId, @RequestBody @Valid VoluntarioRequest voluntarioRequest) {
-        VoluntarioResponse response = voluntarioService.updateById(voluntarioId, voluntarioRequest);
+    @GetMapping("/{id}")
+    public ResponseEntity<VoluntarioResponse> findById(@PathVariable UUID id) {
+        VoluntarioResponse response = voluntarioService.findById(id);
         return ResponseEntity
                 .ok(response);
     }
 
-    @DeleteMapping("/{voluntarioId}")
-    public ResponseEntity<VoluntarioResponse> deleteFromId(@PathVariable UUID voluntarioId) {
-        VoluntarioResponse response = voluntarioService.deleteById(voluntarioId);
+    @PutMapping("/{id}")
+    public ResponseEntity<VoluntarioResponse> updateById(@PathVariable UUID id, @RequestBody @Valid VoluntarioRequest voluntarioRequest) {
+        VoluntarioResponse response = voluntarioService.updateById(id, voluntarioRequest);
         return ResponseEntity
                 .ok(response);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<VoluntarioResponse>> search(
-            @RequestParam
-            @NotBlank(message = "O nome é obrigatório.")
-            String name) {
-        List<VoluntarioResponse> responses = voluntarioService.searchByName(name);
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<VoluntarioResponse> inactivateVoluntario(@PathVariable UUID id) {
+        VoluntarioResponse response = voluntarioService.inactivateVoluntario(id);
         return ResponseEntity
-                .ok(responses);
+                .ok(response);
+    }
+
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<VoluntarioResponse> reactivateVoluntario(@PathVariable UUID id) {
+        VoluntarioResponse response = voluntarioService.reactivateVoluntario(id);
+        return ResponseEntity
+                .ok(response);
     }
 
 }

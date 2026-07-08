@@ -15,12 +15,9 @@ import java.util.List;
 )
 public interface VoluntarioMapper {
 
-    @Mapping(target = "dataCadastro", ignore = true)
-    @Mapping(target = "senha", ignore = true)
-    @Mapping(target = "perfil", ignore = true)
     Voluntario toEntity(VoluntarioRequest voluntarioRequest);
 
-   VoluntarioResponse toResponse(Voluntario voluntario);
+    VoluntarioResponse toResponse(Voluntario voluntario);
 
    List<VoluntarioResponse> toResponseList(List<Voluntario> voluntarios);
 
