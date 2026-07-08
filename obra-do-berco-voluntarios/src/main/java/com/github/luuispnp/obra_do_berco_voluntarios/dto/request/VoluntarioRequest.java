@@ -1,29 +1,39 @@
 package com.github.luuispnp.obra_do_berco_voluntarios.dto.request;
 
+import com.github.luuispnp.obra_do_berco_voluntarios.enums.PerfilAcesso;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+/**
+ * Corpo de requisição para:
+ * POST /voluntarios (cadastro)
+ * PUT  /voluntarios/{id} (atualização)
+ *
+ * Não inclui voluntarioId, dataCadastro nem ativo — esses campos são
+ * controlados pelo backend (@PrePersist e endpoints de inativar/reativar),
+ * não pelo cliente.
+ */
 
 public record VoluntarioRequest(
 
-        @NotBlank(message = "Nome é obrigatório.")
+        @NotBlank(message = "Nome completo é obrigatório")
         String nomeCompleto,
 
-        @Email(message = "Email inválido.")
-        @NotBlank(message = "Email é obrigatório.")
+        @NotBlank(message = "E-mail é obrigatório")
+        @Email(message = "Formato de e-mail inválido")
+        @Size(max = 100, message = "E-mail deve ter no máximo 100 caracteres")
         String email,
 
-        @NotBlank(message = "A senha é obrigatória.")
-        @Size(min = 8, max = 20,
-                message = "A senha deve estar entre {min} e {max} caracteres.")
+        @NotBlank(message = "Senha é obrigatória")
+        @Size(min = 8, message = "Senha deve ter no mínimo 8 caracteres")
         String senha,
 
-        @NotBlank(message = "O telefone é obrigatório.")
-        @Pattern(
-                regexp = "^\\d{11}$",
-                message = "O telefone deve conter exatamente 11 dígitos."
-        )
+        @NotBlank(message = "Telefone é obrigatório")
+        @Size(max = 20, message = "Telefone deve ter no máximo 20 caracteres")
         String telefone
 
-) {}
+) {
+
+}
