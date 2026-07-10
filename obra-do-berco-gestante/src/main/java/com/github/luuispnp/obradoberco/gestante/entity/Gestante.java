@@ -2,27 +2,31 @@ package com.github.luuispnp.obradoberco.gestante.entity;
 
 import com.github.luuispnp.obradoberco.gestante.enums.EstadoCivil;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tb_gestante")
-@Data
 public class Gestante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gestante_id", nullable = false)
-    private Long gestanteId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column
+    @EqualsAndHashCode.Include
+    private UUID id;
 
-    @Column(name = "nome_completo",nullable = false, length = 150)
-    private String nomeCompleto;
+    @Column(nullable = false, length = 150)
+    private String nome;
 
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(name = "numero_identidade",nullable = false, unique = true, length = 25)
+    @Column(name = "numero_identidade", unique = true, length = 25)
     private String numeroIdentidade;
 
     @Column(name = "data_nascimento", nullable = false)
@@ -40,5 +44,19 @@ public class Gestante {
 
     @Column(unique = true)
     private String email;
+
+    @Column(name = "data_cadastro", nullable = false)
+    private LocalDate dataCadastro;
+
+    @Column(nullable = false)
+    private Boolean ativo;
+
+    @PrePersist
+    public void prePersist() {
+        if (dataCadastro == null)
+            dataCadastro = LocalDate.now();
+
+        ativo = true;
+    }
 
 }
