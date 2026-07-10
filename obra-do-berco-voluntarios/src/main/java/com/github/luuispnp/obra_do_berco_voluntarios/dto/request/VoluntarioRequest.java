@@ -1,20 +1,8 @@
 package com.github.luuispnp.obra_do_berco_voluntarios.dto.request;
 
-import com.github.luuispnp.obra_do_berco_voluntarios.enums.PerfilAcesso;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-/**
- * Corpo de requisição para:
- * POST /voluntarios (cadastro)
- * PUT  /voluntarios/{id} (atualização)
- *
- * Não inclui voluntarioId, dataCadastro nem ativo — esses campos são
- * controlados pelo backend (@PrePersist e endpoints de inativar/reativar),
- * não pelo cliente.
- */
 
 public record VoluntarioRequest(
 

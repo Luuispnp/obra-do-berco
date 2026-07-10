@@ -1,6 +1,5 @@
 package com.github.luuispnp.obra_do_berco_voluntarios.dto.response;
 
-import com.github.luuispnp.obra_do_berco_voluntarios.entity.Voluntario;
 import com.github.luuispnp.obra_do_berco_voluntarios.enums.PerfilAcesso;
 
 import java.time.LocalDate;

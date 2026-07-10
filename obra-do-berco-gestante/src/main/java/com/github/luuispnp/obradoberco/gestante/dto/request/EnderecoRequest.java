@@ -1,14 +1,23 @@
 package com.github.luuispnp.obradoberco.gestante.dto.request;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 
-@Data
-public class EnderecoRequest {
+public record EnderecoRequest (
 
-    private String cep;
-    private String logradouro;
-    private String bairro;
-    private String cidade;
-    private String referencia;
+    @NotBlank(message = "CEP é obrigatório.")
+    String cep,
+
+    @NotBlank(message = "Logradouro é obrigatório")
+    String logradouro,
+
+    @NotBlank(message = "Bairro é obrigatório")
+    String bairro,
+
+    @NotBlank(message = "Cidade é obrigatório")
+    String cidade,
+
+    String referencia
+
+) {
 
 }

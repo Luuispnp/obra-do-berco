@@ -6,7 +6,7 @@ import com.github.luuispnp.obradoberco.gestante.enums.EstadoCivil;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record GestanteResponse (
+public record GestanteResponseById(
 
     UUID id,
     String nome,
@@ -21,5 +21,4 @@ public record GestanteResponse (
     Boolean ativo
 
 ) {
-
 }

@@ -5,24 +5,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.br.CPF;
 
-import java.time.LocalDate;
-
-public record GestanteRequest (
+public record GestanteRequestUpdate(
 
     @NotBlank(message = "Nome Completo é obrigatório.")
     String nome,
-
-    @NotBlank(message = "CPF é obrigatório")
-    @Size(max = 11, message = "O CPF deve ter no máximo 11 caracteres.")
-    String cpf,
-
-    @Size(max = 15, message = "O número da identidade deve ter no máximo 14 caracteres.")
-    String numeroIdentidade,
-
-    @NotNull(message = "Data de nascimento é obrigatória")
-    LocalDate dataNascimento,
 
     @NotNull(message = "Estado civil é obrigatório.")
     EstadoCivil estadoCivil,
@@ -38,6 +25,6 @@ public record GestanteRequest (
     @NotNull(message = "Endereço é obrigatório.")
     EnderecoRequest endereco
 
-){
+) {
 
 }
