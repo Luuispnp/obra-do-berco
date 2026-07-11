@@ -1,74 +1,152 @@
 package com.github.luuispnp.obra_do_berco_solicitacoes.service;
 
+import com.github.luuispnp.obra_do_berco_solicitacoes.client.GestanteClient;
+import com.github.luuispnp.obra_do_berco_solicitacoes.client.VoluntarioClient;
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoMotivoRecusaRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoRequest;
-import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.StatusUpdateRequest;
-import com.github.luuispnp.obra_do_berco_solicitacoes.dto.response.GestanteResponse;
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoUpdateRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.response.SolicitacaoResponse;
 import com.github.luuispnp.obra_do_berco_solicitacoes.entity.Solicitacao;
 import com.github.luuispnp.obra_do_berco_solicitacoes.enums.StatusSolicitacao;
-import com.github.luuispnp.obra_do_berco_solicitacoes.exception.SolicitacaoNaoEncontradaException;
-import com.github.luuispnp.obra_do_berco_solicitacoes.client.GestanteClient;
+import com.github.luuispnp.obra_do_berco_solicitacoes.exception.*;
 import com.github.luuispnp.obra_do_berco_solicitacoes.mapper.SolicitacaoMapper;
 import com.github.luuispnp.obra_do_berco_solicitacoes.repository.SolicitacaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import feign.FeignException;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SolicitacaoService {
 
-    @Autowired
-    GestanteClient gestanteClient;
+    private final SolicitacaoMapper mapper;
 
-    @Autowired
-    SolicitacaoMapper solicitacaoMapper;
+    private final SolicitacaoRepository solicitacaoRepository;
 
-    @Autowired
-    SolicitacaoRepository solicitacaoRepository;
+    private final GestanteClient gestanteClient;
 
-    public ResponseEntity<SolicitacaoResponse> createSolicitacao(SolicitacaoRequest solicitacaoRequest) {
-        GestanteResponse gestante = gestanteClient.getGestanteById(solicitacaoRequest.getGestanteId()).getBody();
-        Solicitacao solicitacao = solicitacaoMapper.solicitacaoRequestToEntity(solicitacaoRequest);
-        solicitacao.setStatus(StatusSolicitacao.EM_ANALISE);
-        solicitacao.setDataSolicitacao(LocalDate.now());
+    private final VoluntarioClient voluntarioClient;
+
+    @Transactional
+    public SolicitacaoResponse create(SolicitacaoRequest request) {
+        validarGestanteExistente(request.gestanteId());
+        validarVoluntarioExistente(request.voluntarioResponsavelId());
+        Solicitacao solicitacao = mapper.toEntity(request);
         Solicitacao solicitacaoSalva = solicitacaoRepository.save(solicitacao);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new SolicitacaoResponse(solicitacaoSalva, gestante));
+        return mapper.toResponse(solicitacaoSalva);
     }
 
-    public ResponseEntity<List<SolicitacaoResponse>> getSolicitacoes() {
-        List<Solicitacao> solicitacoes = solicitacaoRepository.findAll();
-        List<SolicitacaoResponse> responses = solicitacoes.stream()
-                .map(solicitacao -> {
-                    GestanteResponse gestante =
-                            gestanteClient.getGestanteById(solicitacao.getGestanteId()).getBody();
-                    return new SolicitacaoResponse(solicitacao, gestante);
-                })
-                .toList();
-        return ResponseEntity.ok(responses);
+    private void validarGestanteExistente(UUID gestanteId) {
+        try {
+            gestanteClient.findById(gestanteId);
+        } catch (FeignException.NotFound exception) {
+            throw new GestanteNaoEncontradaException("Gestante não encontrada.");
+        }
     }
 
-    public ResponseEntity<SolicitacaoResponse> getSolicitacaoById(Long solicitacaoId) {
-        Solicitacao solicitacao = solicitacaoRepository.findById(solicitacaoId)
-                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada"));
-        GestanteResponse gestante = gestanteClient.getGestanteById(solicitacao.getGestanteId()).getBody();
-        return ResponseEntity.ok(new SolicitacaoResponse(solicitacao, gestante));
+    private void validarVoluntarioExistente(UUID voluntarioId) {
+        try {
+            voluntarioClient.findById(voluntarioId);
+        } catch (FeignException.NotFound exception) {
+            throw new VoluntarioNaoEncontradoException("Voluntário não encontrado.");
+        }
+    }
+
+    public List<SolicitacaoResponse> findAllWithFilter(
+            StatusSolicitacao status,
+            UUID gestanteID,
+            LocalDate dataSolicitacao,
+            LocalDateTime dataEncerramento) {
+        Specification<Solicitacao> specification = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status));
+            }
+            if (gestanteID != null) {
+                predicates.add(cb.equal(root.get("gestanteId"), gestanteID));
+            }
+            if (dataSolicitacao != null) {
+                predicates.add(cb.equal(root.get("dataSolicitacao"), dataSolicitacao));
+            }
+            if (dataEncerramento != null) {
+                predicates.add(cb.equal(root.get("dataEncerramento"), dataEncerramento));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        List<Solicitacao> solicitacoes = solicitacaoRepository.findAll(specification);
+        return mapper.toResponseList(solicitacoes);
+    }
+
+    public SolicitacaoResponse findById(UUID id) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada."));
+        return mapper.toResponse(solicitacao);
     }
 
     @Transactional
-    public ResponseEntity<SolicitacaoResponse> updateStatus(Long solicitacaoId, StatusUpdateRequest statusUpdateRequest) {
-        Solicitacao solicitacao = solicitacaoRepository.findById(solicitacaoId)
-                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada"));
-        solicitacao.setStatus(statusUpdateRequest.getStatus());
-        GestanteResponse gestante = gestanteClient.getGestanteById(solicitacao.getGestanteId()).getBody();
-        SolicitacaoResponse solicitacaoResponse = new SolicitacaoResponse(solicitacao, gestante);
-        solicitacaoRepository.save(solicitacao);
-        return ResponseEntity.ok(solicitacaoResponse);
+    public SolicitacaoResponse updateById(
+            UUID id,
+            @Valid SolicitacaoUpdateRequest request) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada."));
+        if (solicitacao.getStatus() == StatusSolicitacao.EM_ANALISE) {
+            mapper.update(request, solicitacao);
+            Solicitacao solicitacaoAtualizada = solicitacaoRepository.save(solicitacao);
+            return mapper.toResponse(solicitacaoAtualizada);
+        } else {
+            throw new StatusInvalidoParaAlteracaoException();
+        }
+    }
+
+    @Transactional
+    public SolicitacaoResponse aprovarSolicitacao(UUID id) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada."));
+        if (solicitacao.getStatus() == StatusSolicitacao.ENTREGUE || solicitacao.getStatus() == StatusSolicitacao.APROVADA) {
+            throw new StatusInvalidoParaAlteracaoException();
+        } else {
+            solicitacao.setStatus(StatusSolicitacao.APROVADA);
+            Solicitacao solicitacaoAtualizada = solicitacaoRepository.save(solicitacao);
+            return mapper.toResponse(solicitacaoAtualizada);
+        }
+    }
+
+    @Transactional
+    public SolicitacaoResponse recusarSolicitacao(
+            UUID id,
+            @Valid SolicitacaoMotivoRecusaRequest motivoRecusa) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada."));
+        if (solicitacao.getStatus() == StatusSolicitacao.ENTREGUE || solicitacao.getStatus() == StatusSolicitacao.APROVADA) {
+            throw new StatusInvalidoParaAlteracaoException();
+        } else {
+            solicitacao.setStatus(StatusSolicitacao.RECUSADA);
+            solicitacao.setMotivoRecusa(motivoRecusa.motivoRecusa());
+            Solicitacao solicitacaoAtualizada = solicitacaoRepository.save(solicitacao);
+            return mapper.toResponse(solicitacaoAtualizada);
+        }
+    }
+
+    @Transactional
+    public SolicitacaoResponse deleteSolicitacao(UUID id) {
+        Solicitacao solicitacao = solicitacaoRepository.findById(id)
+                .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitação não encontrada."));
+        if (solicitacao.getStatus() == StatusSolicitacao.EM_ANALISE) {
+            solicitacaoRepository.deleteById(id);
+            return mapper.toResponse(solicitacao);
+        } else {
+            throw new StatusInvalidoParaRemocaoException();
+        }
     }
 }

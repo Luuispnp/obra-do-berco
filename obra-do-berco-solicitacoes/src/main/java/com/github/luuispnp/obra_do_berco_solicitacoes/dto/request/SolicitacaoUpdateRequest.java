@@ -7,15 +7,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public record SolicitacaoRequest(
-
-    @NotNull(message = "O ID da gestante é obrigatório")
-    UUID gestanteId,
-
-    @NotNull(message = "O ID do voluntário responsável é obrigatório")
-    UUID voluntarioResponsavelId,
+public record SolicitacaoUpdateRequest(
 
     @NotNull(message = "A idade gestacional é obrigatória")
     @Min(value = 27, message = "Idade gestacional deve ser maior que 27 semanas")
@@ -47,5 +40,4 @@ public record SolicitacaoRequest(
     String beneficioSocial
 
 ) {
-
 }

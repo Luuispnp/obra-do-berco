@@ -1,40 +1,84 @@
 package com.github.luuispnp.obra_do_berco_solicitacoes.controller;
 
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoMotivoRecusaRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoRequest;
-import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.StatusUpdateRequest;
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoUpdateRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.response.SolicitacaoResponse;
+import com.github.luuispnp.obra_do_berco_solicitacoes.enums.StatusSolicitacao;
 import com.github.luuispnp.obra_do_berco_solicitacoes.service.SolicitacaoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/solicitacoes")
+@RequiredArgsConstructor
 public class SolicitacaoController {
 
-    @Autowired
-    SolicitacaoService solicitacaoService;
+    private final SolicitacaoService solicitacaoService;
 
-    @PostMapping("/solicitacoes")
-    public ResponseEntity<SolicitacaoResponse> createSolicitacao(@RequestBody SolicitacaoRequest solicitacaoRequest) {
-        return solicitacaoService.createSolicitacao(solicitacaoRequest);
+    @PostMapping
+    public ResponseEntity<SolicitacaoResponse> create(@RequestBody @Valid SolicitacaoRequest request) {
+        SolicitacaoResponse response = solicitacaoService.create(request);
+        return ResponseEntity
+                .ok(response);
     }
 
-    @GetMapping("/solicitacoes")
-    public ResponseEntity<List<SolicitacaoResponse>> getSolicitacoes() {
-        return solicitacaoService.getSolicitacoes();
+    @GetMapping
+    public ResponseEntity<List<SolicitacaoResponse>> findAllWithFilter(
+            @RequestParam(required = false) StatusSolicitacao status,
+            @RequestParam(required = false) UUID gestanteID,
+            @RequestParam(required = false) LocalDate dataSolicitacao,
+            @RequestParam(required = false) LocalDateTime dataEncerramento
+            ) {
+        List<SolicitacaoResponse> response = solicitacaoService.findAllWithFilter(status, gestanteID, dataSolicitacao, dataEncerramento);
+        return ResponseEntity
+                .ok(response);
     }
 
-    @GetMapping("/solicitacoes/{solicitacaoId}")
-    public ResponseEntity<SolicitacaoResponse> getSolicitacaoById(@PathVariable Long solicitacaoId) {
-        return solicitacaoService.getSolicitacaoById(solicitacaoId);
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitacaoResponse> findById(@PathVariable UUID id) {
+        SolicitacaoResponse response = solicitacaoService.findById(id);
+        return ResponseEntity
+                .ok(response);
     }
 
-    @PatchMapping("/solicitacoes/{solicitacaoId}/status")
-    public ResponseEntity<SolicitacaoResponse> updateStatus(@PathVariable Long solicitacaoId, @RequestBody StatusUpdateRequest statusUpdateRequest) {
-        return solicitacaoService.updateStatus(solicitacaoId, statusUpdateRequest);
+    @PutMapping("/{id}")
+    public ResponseEntity<SolicitacaoResponse> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid SolicitacaoUpdateRequest request) {
+        SolicitacaoResponse response = solicitacaoService.updateById(id, request);
+        return ResponseEntity
+                .ok(response);
     }
 
+    @PatchMapping("/{id}/aprovar")
+    public ResponseEntity<SolicitacaoResponse> aprovarSolicitacao(@PathVariable UUID id) {
+        SolicitacaoResponse response = solicitacaoService.aprovarSolicitacao(id);
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @PatchMapping("/{id}/recusar")
+    public ResponseEntity<SolicitacaoResponse> recusarSolicitacao(
+            @PathVariable UUID id,
+            @RequestBody SolicitacaoMotivoRecusaRequest motivoRecusa) {
+        SolicitacaoResponse response = solicitacaoService.recusarSolicitacao(id, motivoRecusa);
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SolicitacaoResponse> delete(@PathVariable UUID id) {
+        SolicitacaoResponse response = solicitacaoService.deleteSolicitacao(id);
+        return ResponseEntity
+                .ok(response);
+    }
 }
