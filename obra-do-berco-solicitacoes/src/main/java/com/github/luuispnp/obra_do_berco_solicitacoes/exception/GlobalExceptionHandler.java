@@ -41,6 +41,47 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(GestanteNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handleGestanteNaoEncontradaException(GestanteNaoEncontradaException exception) {
+        ErrorResponse error = new ErrorResponse(
+                exception.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
 
+    @ExceptionHandler(VoluntarioNaoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleVoluntarioNaoEncontradoException(VoluntarioNaoEncontradoException exception) {
+        ErrorResponse error = new ErrorResponse(
+                exception.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
 
+    @ExceptionHandler(StatusInvalidoParaAlteracaoException.class)
+    public ResponseEntity<ErrorResponse> handleStatusInvalidoParaAlteracaoException(StatusInvalidoParaAlteracaoException exception) {
+        ErrorResponse error = new ErrorResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(StatusInvalidoParaRemocaoException.class)
+    public ResponseEntity<ErrorResponse> handleStatusInvalidoParaRemocaoException(StatusInvalidoParaRemocaoException exception) {
+        ErrorResponse error = new ErrorResponse(
+                exception.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
 }
