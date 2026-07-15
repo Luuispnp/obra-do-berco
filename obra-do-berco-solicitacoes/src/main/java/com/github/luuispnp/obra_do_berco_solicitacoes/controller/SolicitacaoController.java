@@ -10,11 +10,11 @@ import com.github.luuispnp.obra_do_berco_solicitacoes.service.SolicitacaoService
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,17 +29,18 @@ public class SolicitacaoController {
     public ResponseEntity<SolicitacaoResponse> create(@RequestBody @Valid SolicitacaoRequest request) {
         SolicitacaoResponse response = solicitacaoService.create(request);
         return ResponseEntity
-                .ok(response);
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<SolicitacaoResponse>> findAllWithFilter(
             @RequestParam(required = false) StatusSolicitacao status,
-            @RequestParam(required = false) UUID gestanteID,
-            @RequestParam(required = false) LocalDate dataSolicitacao,
-            @RequestParam(required = false) LocalDateTime dataEncerramento
+            @RequestParam(required = false) UUID gestanteId,
+            @RequestParam(required = false) LocalDate dataInicio,
+            @RequestParam(required = false) LocalDate dataFim
             ) {
-        List<SolicitacaoResponse> response = solicitacaoService.findAllWithFilter(status, gestanteID, dataSolicitacao, dataEncerramento);
+        List<SolicitacaoResponse> response = solicitacaoService.findAllWithFilter(status, gestanteId, dataInicio, dataFim);
         return ResponseEntity
                 .ok(response);
     }

@@ -66,22 +66,23 @@ public class SolicitacaoService {
 
     public List<SolicitacaoResponse> findAllWithFilter(
             StatusSolicitacao status,
-            UUID gestanteID,
-            LocalDate dataSolicitacao,
-            LocalDateTime dataEncerramento) {
+            UUID gestanteId,
+            LocalDate dataInicio,
+            LocalDate dataFim) {
         Specification<Solicitacao> specification = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (status != null) {
                 predicates.add(cb.equal(root.get("status"), status));
             }
-            if (gestanteID != null) {
-                predicates.add(cb.equal(root.get("gestanteId"), gestanteID));
+            if (gestanteId != null) {
+                predicates.add(cb.equal(root.get("gestanteId"), gestanteId));
             }
-            if (dataSolicitacao != null) {
-                predicates.add(cb.equal(root.get("dataSolicitacao"), dataSolicitacao));
-            }
-            if (dataEncerramento != null) {
-                predicates.add(cb.equal(root.get("dataEncerramento"), dataEncerramento));
+            if (dataInicio != null && dataFim != null) {
+                predicates.add(cb.between(root.get("dataSolicitacao"), dataInicio, dataFim));
+            } else if (dataInicio != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("dataSolicitacao"), dataInicio));
+            } else if (dataFim != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("dataSolicitacao"), dataFim));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };
