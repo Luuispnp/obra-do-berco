@@ -1,5 +1,6 @@
 package com.github.luuispnp.obra_do_berco_solicitacoes.controller;
 
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.AtualizacaoStatusLoteRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoMotivoRecusaRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoUpdateRequest;
@@ -81,4 +82,13 @@ public class SolicitacaoController {
         return ResponseEntity
                 .ok(response);
     }
+
+    @PatchMapping("/status-lote")
+    public ResponseEntity<Void> atualizarStatusLote(@RequestBody AtualizacaoStatusLoteRequest request) {
+        solicitacaoService.atualizarStatusLote(request.atualizacoes());
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
 }

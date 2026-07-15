@@ -1,4 +1,4 @@
-package com.github.luuispnp.obra_do_berco_solicitacoes.enums;
+package github.luuispnp.obra_do_berco_eventos.enums;
 
 
 public enum StatusSolicitacao {

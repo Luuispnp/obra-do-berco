@@ -2,6 +2,7 @@ package com.github.luuispnp.obra_do_berco_solicitacoes.service;
 
 import com.github.luuispnp.obra_do_berco_solicitacoes.client.GestanteClient;
 import com.github.luuispnp.obra_do_berco_solicitacoes.client.VoluntarioClient;
+import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.AtualizacaoStatusRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoMotivoRecusaRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoRequest;
 import com.github.luuispnp.obra_do_berco_solicitacoes.dto.request.SolicitacaoUpdateRequest;
@@ -149,4 +150,15 @@ public class SolicitacaoService {
             throw new StatusInvalidoParaRemocaoException();
         }
     }
+
+    @Transactional
+    public void atualizarStatusLote(List<AtualizacaoStatusRequest> atualizacoes) {
+        for (AtualizacaoStatusRequest request : atualizacoes) {
+            Solicitacao solicitacao = solicitacaoRepository.findById(request.solicitacaoId())
+                    .orElseThrow(() -> new SolicitacaoNaoEncontradaException("Solicitacao não encontrada."));
+            solicitacao.setStatus(request.status());
+            solicitacao.setDataEncerramento(LocalDateTime.now());
+        }
+    }
+
 }

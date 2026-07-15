@@ -25,6 +25,7 @@
 		<module>obra-do-berco-api-gateway</module>
 		<module>obra-do-berco-eureka-server</module>
 		<module>obra-do-berco-voluntarios</module>
+		<module>obra-do-berco-eventos</module>
 	</modules>
 
 </project>
