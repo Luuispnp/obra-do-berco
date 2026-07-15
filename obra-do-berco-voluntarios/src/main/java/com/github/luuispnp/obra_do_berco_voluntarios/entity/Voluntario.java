@@ -52,7 +52,9 @@ public class Voluntario {
             dataCadastro = LocalDate.now();
         }
         ativo = true;
-        perfil = PerfilAcesso.VOLUNTARIO;
+        if (perfil == null) {
+            perfil = PerfilAcesso.VOLUNTARIO;
+        }
     }
 
 }
