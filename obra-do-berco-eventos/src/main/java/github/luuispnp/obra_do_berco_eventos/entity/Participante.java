@@ -1,5 +1,6 @@
 package github.luuispnp.obra_do_berco_eventos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class Participante {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "evento_id", nullable = false)
+    @JsonIgnore
     private Evento evento;
 
     @Column(name = "solicitacao_id", nullable = false)
