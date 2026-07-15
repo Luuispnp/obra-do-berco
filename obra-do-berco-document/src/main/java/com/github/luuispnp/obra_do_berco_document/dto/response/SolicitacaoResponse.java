@@ -1,20 +1,29 @@
 package com.github.luuispnp.obra_do_berco_document.dto.response;
 
+import com.github.luuispnp.obra_do_berco_document.enums.SexoCrianca;
 import com.github.luuispnp.obra_do_berco_document.enums.StatusSolicitacao;
-import lombok.Data;
 
-@Data
-public class SolicitacaoResponse {
+import java.time.LocalDate;
+import java.util.UUID;
 
-    private Long id;
-    private Long gestanteId;
-    private StatusSolicitacao status;
-    private Integer idadeGestacionalSemanas;
-    private String sexoCrianca;
-    private String observacaoGravidez;
-    private Boolean trabalhando;
-    private Integer qtdPessoasResidencia;
-    private String beneficioGoverno;
-    private Boolean necessidadeAtendimentoSocial;
+public record SolicitacaoResponse(
 
+        UUID solicitacaoId,
+        UUID gestanteId,
+        UUID voluntarioResponsavelId,
+        StatusSolicitacao status,
+        LocalDate dataSolicitacao,
+        Integer idadeGestacionalSemanas,
+        LocalDate dataProvavelParto,
+        SexoCrianca sexoCrianca,
+        String nomeDoPai,
+        Boolean trabalhando,
+        String observacaoGravidez,
+        Integer qtdPessoasResidencia,
+        Boolean cartaoPreNatal,
+        String religiao,
+        String atendimentoSocial,
+        String beneficioSocial
+
+) {
 }

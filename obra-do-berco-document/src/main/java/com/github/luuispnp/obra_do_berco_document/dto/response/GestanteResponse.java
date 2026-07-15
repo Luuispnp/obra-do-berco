@@ -1,24 +1,21 @@
 package com.github.luuispnp.obra_do_berco_document.dto.response;
 
-import lombok.Data;
+import com.github.luuispnp.obra_do_berco_document.enums.EstadoCivil;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-@Data
-public class GestanteResponse {
+public record GestanteResponse(
 
-    private Long id;
-    private String nomeCompleto;
-    private String identidade;
-    private String cpf;
-    private LocalDate dataNascimento;
-    private String telefone;
-    private String endereco;
-    private String bairro;
-    private String cidade;
-    private String estadoCivil;
-    private String religiao;
-    private String email;
-    private String nomePai;
+        UUID id,
+        String nome,
+        String cpf,
+        String numeroIdentidade,
+        LocalDate dataNascimento,
+        EnderecoResponse endereco,
+        EstadoCivil estadoCivil,
+        String telefone,
+        String email
 
+) {
 }

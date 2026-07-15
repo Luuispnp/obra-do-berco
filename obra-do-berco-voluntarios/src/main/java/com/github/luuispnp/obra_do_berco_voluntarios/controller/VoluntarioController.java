@@ -1,6 +1,8 @@
 package com.github.luuispnp.obra_do_berco_voluntarios.controller;
 
+import com.github.luuispnp.obra_do_berco_voluntarios.dto.request.VoluntarioAutenticacaoRequest;
 import com.github.luuispnp.obra_do_berco_voluntarios.dto.request.VoluntarioRequest;
+import com.github.luuispnp.obra_do_berco_voluntarios.dto.response.VoluntarioAutenticacaoResponse;
 import com.github.luuispnp.obra_do_berco_voluntarios.dto.response.VoluntarioResponse;
 import com.github.luuispnp.obra_do_berco_voluntarios.service.VoluntarioService;
 import jakarta.validation.Valid;
@@ -64,6 +66,13 @@ public class VoluntarioController {
     @PatchMapping("/{id}/reativar")
     public ResponseEntity<VoluntarioResponse> reactivateVoluntario(@PathVariable UUID id) {
         VoluntarioResponse response = voluntarioService.reactivateVoluntario(id);
+        return ResponseEntity
+                .ok(response);
+    }
+
+    @PostMapping("/autenticar")
+    public ResponseEntity<VoluntarioAutenticacaoResponse> autenticar(@RequestBody @Valid VoluntarioAutenticacaoRequest request) {
+        VoluntarioAutenticacaoResponse response = voluntarioService.autenticar(request.email(), request.senha());
         return ResponseEntity
                 .ok(response);
     }
