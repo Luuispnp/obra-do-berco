@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)
 public class JwtGatewayFilter extends OncePerRequestFilter {
 
     private final SecretKey key;
@@ -41,7 +41,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getRequestURI().startsWith("/auth/")) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || request.getRequestURI().startsWith("/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }

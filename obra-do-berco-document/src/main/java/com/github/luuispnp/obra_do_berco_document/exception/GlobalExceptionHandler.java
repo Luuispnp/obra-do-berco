@@ -10,35 +10,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        ErrorResponse error = new ErrorResponse(
-                exception.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
-        );
         return ResponseEntity
                 .internalServerError()
-                .body(error);
+                .body(ErrorResponse.of("INTERNAL_ERROR", exception.getMessage()));
     }
 
     @ExceptionHandler(SolicitacaoNaoEncontradaException.class)
     public ResponseEntity<ErrorResponse> handleSolicitacaoNaoEncontradaException(SolicitacaoNaoEncontradaException exception) {
-        ErrorResponse error = new ErrorResponse(
-                exception.getMessage(),
-                HttpStatus.NOT_FOUND.value()
-        );
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(error);
+                .body(ErrorResponse.of("NOT_FOUND", exception.getMessage()));
     }
 
     @ExceptionHandler(EventoNaoEncontradoException.class)
     public ResponseEntity<ErrorResponse> handleEventoNaoEncontradoException(EventoNaoEncontradoException exception) {
-        ErrorResponse error = new ErrorResponse(
-                exception.getMessage(),
-                HttpStatus.NOT_FOUND.value()
-        );
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(error);
+                .body(ErrorResponse.of("NOT_FOUND", exception.getMessage()));
     }
 
 }

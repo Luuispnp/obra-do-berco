@@ -33,11 +33,11 @@ public class VoluntarioController {
 
     @GetMapping
     public ResponseEntity<List<VoluntarioResponse>> findVoluntarios(
-            @RequestParam(required = false) String nomeCompleto,
+            @RequestParam(required = false) String nome,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) Boolean ativo
     ) {
-        List<VoluntarioResponse> response = voluntarioService.findWithFilter(nomeCompleto, email, ativo);
+        List<VoluntarioResponse> response = voluntarioService.findWithFilter(nome, email, ativo);
         return ResponseEntity
                 .ok(response);
     }
