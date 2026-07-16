@@ -56,6 +56,7 @@ jobs:
       - name: Build and test
         working-directory: ${{ matrix.service }}
         run: |
+          chmod +x ./mvnw
           db_name=$(echo "${{ matrix.service }}" | tr '-' '_')
           export DB_URL="jdbc:postgresql://localhost:5432/${db_name}"
           ./mvnw -B verify
